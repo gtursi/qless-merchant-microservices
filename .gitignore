@@ -1,0 +1,6 @@
+/target
+.swagger-codegen-ignore
+options.json
+swagger-spring.iml
+.idea
+.swagger-codegen

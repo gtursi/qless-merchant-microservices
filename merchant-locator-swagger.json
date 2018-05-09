@@ -1,0 +1,518 @@
+{
+    "swagger": "2.0",
+    "basePath": "/",
+    "paths": {
+        "/merchant/location": {
+            "get": {
+                "responses": {
+                    "502": {
+                        "description": "Invalid response from an upstream server.",
+                        "schema": {
+                            "$ref": "#/definitions/APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected service failure.",
+                        "schema": {
+                            "$ref": "#/definitions/APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found.",
+                        "schema": {
+                            "$ref": "#/definitions/APIError"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameter(s).",
+                        "schema": {
+                            "$ref": "#/definitions/APIError"
+                        }
+                    },
+                    "200": {
+                        "description": "Location(s) matching the search parameters.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Location"
+                            }
+                        }
+                    }
+                },
+                "summary": "Returns merchant locations that match search criteria",
+                "description": "This method identifies valid locations that match ALL provided search criteria.  Simpler queries work best for experimentation and early development, whereas multi-parameter queries permit strict optimization of client data usage.",
+                "operationId": "merchant_location_search",
+                "parameters": [
+                    {
+                        "name": "searchText",
+                        "in": "query",
+                        "type": "string",
+                        "description": "Identify and sort merchants or locations for which the search text offers approximate matches."
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "type": "number",
+                        "description": "Limits results to a region with its center specified by the given GPS longitude."
+                    },
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "type": "number",
+                        "description": "Limits results to a region with its center specified by the given GPS latitude."
+                    },
+                    {
+                        "name": "searchRadius",
+                        "in": "query",
+                        "type": "integer",
+                        "description": "Radius of the search area in meters.",
+                        "default": 50000
+                    },
+                    {
+                        "name": "gid",
+                        "in": "query",
+                        "type": "array",
+                        "description": "Limits/queries locations by the provided global identifier.",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi"
+                    },
+                    {
+                        "name": "maximumResults",
+                        "in": "query",
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "The maximum number of locations to return for a single query.",
+                        "default": 10
+                    },
+                    {
+                        "name": "mobileClientAccess",
+                        "in": "query",
+                        "type": "boolean",
+                        "description": "If set, limits results to locations having/restricting mobile access."
+                    },
+                    {
+                        "name": "omitMerchantInfo",
+                        "in": "query",
+                        "type": "boolean",
+                        "description": "If true, omit the merchant information from returned locations."
+                    },
+                    {
+                        "name": "omitContactInfo",
+                        "in": "query",
+                        "type": "boolean",
+                        "description": "If true, omit the contact information from returned locations."
+                    },
+                    {
+                        "name": "omitConsumerFeatures",
+                        "in": "query",
+                        "type": "boolean",
+                        "description": "If true, omit the list of supported consumer features from the returned locations."
+                    },
+                    {
+                        "name": "X-Fields",
+                        "in": "header",
+                        "type": "string",
+                        "format": "mask",
+                        "description": "An optional fields mask"
+                    }
+                ],
+                "tags": [
+                    "default"
+                ]
+            }
+        },
+        "/merchant/location/{location_gid}": {
+            "parameters": [
+                {
+                    "name": "location_gid",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "502": {
+                        "description": "Invalid response from an upstream server.",
+                        "schema": {
+                            "$ref": "#/definitions/APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Unexpected service failure.",
+                        "schema": {
+                            "$ref": "#/definitions/APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found.",
+                        "schema": {
+                            "$ref": "#/definitions/APIError"
+                        }
+                    },
+                    "200": {
+                        "description": "Location matching the global identifier.",
+                        "schema": {
+                            "$ref": "#/definitions/Location"
+                        }
+                    }
+                },
+                "summary": "Returns a uniquely-identified merchant location",
+                "description": "This method returns a single merchant location that matches a unique global identifier.  The global identifier is returned in a NetworkSource entity with a 'location' type, usually in response to a location search query.",
+                "operationId": "merchant_location_get",
+                "parameters": [
+                    {
+                        "name": "mobileClientAccess",
+                        "in": "query",
+                        "type": "boolean",
+                        "description": "If set, limits result to locations having/restricting mobile access."
+                    },
+                    {
+                        "name": "omitMerchantInfo",
+                        "in": "query",
+                        "type": "boolean",
+                        "description": "If true, omit the merchant information from returned locations."
+                    },
+                    {
+                        "name": "omitContactInfo",
+                        "in": "query",
+                        "type": "boolean",
+                        "description": "If true, omit the contact information from returned locations."
+                    },
+                    {
+                        "name": "omitConsumerFeatures",
+                        "in": "query",
+                        "type": "boolean",
+                        "description": "If true, omit the list of supported consumer features from the returned locations."
+                    },
+                    {
+                        "name": "X-Fields",
+                        "in": "header",
+                        "type": "string",
+                        "format": "mask",
+                        "description": "An optional fields mask"
+                    }
+                ],
+                "tags": [
+                    "default"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "QLess Merchant Locator",
+        "version": "1.0",
+        "description": "This API retrieves merchant location records based on text/geo-based query parameters."
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "default",
+            "description": "Default namespace"
+        }
+    ],
+    "definitions": {
+        "APIError": {
+            "required": [
+                "message"
+            ],
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "Text describing the cause of the error.",
+                    "example": "The request failed due to an internal server error."
+                }
+            },
+            "type": "object"
+        },
+        "Location": {
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "source": {
+                    "$ref": "#/definitions/NetworkSource"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The human-readable name of this location.",
+                    "example": "Speedy DMV"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Descriptive text for this location.",
+                    "example": "Speedy DMV, St. Charles"
+                },
+                "merchantInfo": {
+                    "$ref": "#/definitions/Merchant"
+                },
+                "contactInfo": {
+                    "$ref": "#/definitions/LocationContactInfo"
+                },
+                "consumerFeatures": {
+                    "$ref": "#/definitions/ConsumerFeatures"
+                }
+            },
+            "type": "object"
+        },
+        "NetworkSource": {
+            "required": [
+                "globalId",
+                "hostId",
+                "hostName",
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The source data category that this object identifies.",
+                    "example": "location",
+                    "enum": [
+                        "location",
+                        "merchant"
+                    ]
+                },
+                "globalId": {
+                    "type": "string",
+                    "description": "A globally-unique identification for the associated data element within this API.",
+                    "example": "514E898949227FE83D4F51F238354B6F91BE3DAF"
+                },
+                "hostName": {
+                    "type": "string",
+                    "description": "The host environment that owns the data element.",
+                    "example": "merchant.qless.com"
+                },
+                "hostId": {
+                    "type": "string",
+                    "description": "The QLess environment-specific identifier for the data element.",
+                    "example": "10512"
+                },
+                "indirectId": {
+                    "type": "string",
+                    "description": "A globally-unique (GUUID) identification for the associated object and is equivalent to the QLess indirectId in its database.",
+                    "example": "5f69bd28-2ba2-4f7a-b89b-224a323d0843"
+                }
+            },
+            "type": "object"
+        },
+        "Merchant": {
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "source": {
+                    "example": {
+                        "type": "merchant",
+                        "globalId": "4943203390A6F695E7071B4CC570C58015298972",
+                        "hostName": "merchant.qless.com",
+                        "hostId": "1512",
+                        "indirectId": "0e060021-a452-41e5-94cf-e33558e11c01"
+                    },
+                    "$ref": "#/definitions/NetworkSource"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The merchant descriptive name.",
+                    "example": "Super Speedy, Inc."
+                }
+            },
+            "type": "object"
+        },
+        "LocationContactInfo": {
+            "required": [
+                "timeZone"
+            ],
+            "properties": {
+                "timeZone": {
+                    "type": "string",
+                    "description": "The Olson-formatted timezone.",
+                    "example": "America/Chicago"
+                },
+                "address": {
+                    "$ref": "#/definitions/Address"
+                },
+                "phone": {
+                    "$ref": "#/definitions/PhoneNumber"
+                },
+                "fax": {
+                    "$ref": "#/definitions/PhoneNumber"
+                },
+                "gps": {
+                    "$ref": "#/definitions/GPSCoordinates"
+                }
+            },
+            "type": "object"
+        },
+        "Address": {
+            "required": [
+                "addressLines",
+                "city"
+            ],
+            "properties": {
+                "addressLines": {
+                    "type": "array",
+                    "description": "One or more lines of identification within the city.",
+                    "example": [
+                        "123 South Main St."
+                    ],
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "city": {
+                    "type": "string",
+                    "description": "The city where the address is located.",
+                    "example": "St. Charles"
+                },
+                "state": {
+                    "type": "string",
+                    "description": "The state where the address is located.",
+                    "example": "MO"
+                },
+                "postalCode": {
+                    "type": "string",
+                    "description": "The zip/postal code for the address.",
+                    "example": "63301"
+                },
+                "isoCountryCode": {
+                    "type": "string",
+                    "description": "The ISO Alpha-2 country code where the address is located.",
+                    "example": "US"
+                }
+            },
+            "type": "object"
+        },
+        "PhoneNumber": {
+            "required": [
+                "countryCode",
+                "digits"
+            ],
+            "properties": {
+                "countryCode": {
+                    "type": "string",
+                    "description": "The international phone number calling code.",
+                    "example": "1"
+                },
+                "digits": {
+                    "type": "string",
+                    "description": "The phone number without prefix or country code.",
+                    "example": "6365557322"
+                }
+            },
+            "type": "object"
+        },
+        "GPSCoordinates": {
+            "required": [
+                "latitude",
+                "longitude"
+            ],
+            "properties": {
+                "longitude": {
+                    "type": "number",
+                    "description": "The longitude for the site.",
+                    "example": -90.513022
+                },
+                "latitude": {
+                    "type": "number",
+                    "description": "The latitude for the site.",
+                    "example": 38.786271
+                }
+            },
+            "type": "object"
+        },
+        "ConsumerFeatures": {
+            "required": [
+                "hasAppointments",
+                "hasCustomScreens",
+                "hasMobileAccess",
+                "hasSMSSummoning",
+                "hasTransactionTypes",
+                "hasVoiceQueuing",
+                "maxSimultaneousQueues",
+                "shouldDisplayTransactionTypesBeforeQueues",
+                "supportedLocales",
+                "supportsPartySize"
+            ],
+            "properties": {
+                "hasAppointments": {
+                    "type": "boolean",
+                    "description": "Appointments may be scheduled at this location.",
+                    "default": false,
+                    "example": true
+                },
+                "hasCustomScreens": {
+                    "type": "boolean",
+                    "description": "Queuing a customer at the location recommends providing additional custom content.",
+                    "default": false
+                },
+                "hasSMSSummoning": {
+                    "type": "boolean",
+                    "description": "Consumers may be summoned via SMS.",
+                    "default": false
+                },
+                "hasVoiceQueuing": {
+                    "type": "boolean",
+                    "description": "Consumers may call a dedicated phone number to manage their queue position.",
+                    "default": false,
+                    "example": true
+                },
+                "hasTransactionTypes": {
+                    "type": "boolean",
+                    "description": "Queued customers may include transaction types describing their desired service.",
+                    "default": false,
+                    "example": true
+                },
+                "hasMobileAccess": {
+                    "type": "boolean",
+                    "description": "Customers may use mobile devices to join queues on their own.",
+                    "default": false,
+                    "example": true
+                },
+                "maxSimultaneousQueues": {
+                    "type": "integer",
+                    "description": "The maximum number of queues that may be entered at one time.",
+                    "default": 0,
+                    "example": 1
+                },
+                "supportsPartySize": {
+                    "type": "boolean",
+                    "description": "Party size is required when entering queues.",
+                    "default": false
+                },
+                "shouldDisplayTransactionTypesBeforeQueues": {
+                    "type": "boolean",
+                    "description": "Recommends that consumers being queued be allowed to first choose their desired transaction type before their target queue.",
+                    "default": false
+                },
+                "supportedLocales": {
+                    "type": "array",
+                    "description": "Provides the list of supported languages for consumers at the location.",
+                    "example": [
+                        "en_US",
+                        "es_ES"
+                    ],
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "type": "object"
+        }
+    },
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    }
+}
