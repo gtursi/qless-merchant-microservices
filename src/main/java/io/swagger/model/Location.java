@@ -1,6 +1,11 @@
 package io.swagger.model;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
@@ -13,13 +18,15 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
+import static java.lang.Boolean.*;
+
 /**
  * Location
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-05-09T09:53:33.998-03:00")
 
-public class Location   {
+public class Location implements Cloneable {
   @JsonProperty("source")
   private NetworkSource source = null;
 
@@ -211,5 +218,59 @@ public class Location   {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+  public boolean filterByText(String searchText) {
+  	if(getName() != null && searchText != null) {
+		return getName().contains(searchText);
+	}
+	return true;
+  }
+
+  public boolean filterByLongitude(BigDecimal longitude) {
+  	if(getContactInfo().getGps().getLongitude() != null && longitude != null){
+  		return getContactInfo().getGps().getLongitude().equals(longitude);
+	}
+    return true;
+  }
+
+	public boolean filterByLatitude(BigDecimal latitude) {
+		if(getContactInfo().getGps().getLatitude() != null && latitude != null){
+			return getContactInfo().getGps().getLatitude().equals(latitude);
+		}
+		return true;
+	}
+
+	public boolean filterByGlobalId(List<String> gid) {
+  		if(gid != null && !gid.isEmpty()) {
+			throw new RuntimeException("Method not implemented");
+		}
+		return true;
+	}
+
+	public boolean filterByMobileClientAcces(Boolean mobileClientAccess) {
+  		return getConsumerFeatures().filterByMobileClientAccess(mobileClientAccess);
+	}
+
+	public Location clone() throws CloneNotSupportedException {
+  		return (Location) super.clone();
+	}
+	public Location clone(Boolean omitMerchantInfo, Boolean omitContactInfo, Boolean omitConsumerFeatures)  {
+		Location clone = null;
+		try {
+			clone = this.clone();
+			if(TRUE.equals(omitMerchantInfo)){
+				clone.setMerchantInfo(null);
+			}
+			if(TRUE.equals(omitContactInfo)){
+				clone.setContactInfo(null);
+			}
+			if(TRUE.equals(omitConsumerFeatures)){
+				clone.setConsumerFeatures(null);
+			}
+		} catch (CloneNotSupportedException e) {
+			// clone is supported
+		}
+  		return clone;
+	}
 }
 
