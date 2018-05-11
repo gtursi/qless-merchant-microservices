@@ -1,6 +1,7 @@
 # QLess Coding Challenge
 
 This applications exposes Merchant REST API using a Spring Boot Server.
+
 Source data, given in a json file, is updated to a MongoDB in order to search locations using queries.
 
 ## Overview  
