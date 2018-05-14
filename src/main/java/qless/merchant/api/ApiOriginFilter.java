@@ -1,4 +1,4 @@
-package io.swagger.api;
+package qless.merchant.api;
 
 import java.io.IOException;
 

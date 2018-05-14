@@ -1,15 +1,11 @@
 package qless.merchant.repository;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.MongoException;
 import qless.merchant.model.Location;
 import qless.merchant.model.NetworkSource;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.mongodb.core.CollectionCallback;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -29,17 +25,14 @@ public class LocationRepository {
 	}
 
 	public Location findOne(String locationGid, Boolean mobileClientAccess, Boolean omitMerchantInfo, Boolean omitContactInfo, Boolean omitConsumerFeatures) {
-		DBObject location = mongoTemplate.execute("location", new CollectionCallback<DBObject>() {
-			@Override
-			public DBObject doInCollection(DBCollection dbCollection) throws MongoException, DataAccessException {
-				BasicDBObject projections = getExcludedProjections(omitMerchantInfo, omitContactInfo, omitConsumerFeatures);
-				List<BasicDBObject> filters = new ArrayList<BasicDBObject>();
-				addLocationGlobalIdCriteria(filters, locationGid);
-				addMobileClientAccessCriteria(filters, mobileClientAccess);
-				BasicDBObject andCriteria = new BasicDBObject();
-				andCriteria.put("$and", filters);
-				return dbCollection.findOne(andCriteria, projections);
-			}
+		DBObject location = mongoTemplate.execute("location", dbCollection -> {
+			BasicDBObject projections = getExcludedProjections(omitMerchantInfo, omitContactInfo, omitConsumerFeatures);
+			List<BasicDBObject> filters = new ArrayList<>();
+			addLocationGlobalIdCriteria(filters, locationGid);
+			addMobileClientAccessCriteria(filters, mobileClientAccess);
+			BasicDBObject andCriteria = new BasicDBObject();
+			andCriteria.put("$and", filters);
+			return dbCollection.findOne(andCriteria, projections);
 		});
 		return dbObjectToLocation(location);
 	}
@@ -48,21 +41,18 @@ public class LocationRepository {
 								 Integer maximumResults, Boolean mobileClientAccess, Boolean omitMerchantInfo,
 								 Boolean omitContactInfo, Boolean omitConsumerFeatures) {
 
-		DBCursor cursor = mongoTemplate.execute("location", new CollectionCallback<DBCursor>() {
-			@Override
-			public DBCursor doInCollection(DBCollection dbCollection) throws MongoException, DataAccessException {
-				BasicDBObject projections = getExcludedProjections(omitMerchantInfo, omitContactInfo, omitConsumerFeatures);
-				List<BasicDBObject> filters = new ArrayList<BasicDBObject>();
-				addNameCriteria(filters, name);
-				addGeospatialCriteria(filters, longitude, latitude, radius);
-				addGlobalIdsCriteria(filters, gid);
-				addMobileClientAccessCriteria(filters, mobileClientAccess);
-				BasicDBObject andCriteria = new BasicDBObject();
-				if(!filters.isEmpty()) {
-					andCriteria.put("$and", filters);
-				}
-				return dbCollection.find(andCriteria, projections).limit(maximumResults);
+		DBCursor cursor = mongoTemplate.execute("location", dbCollection -> {
+			BasicDBObject projections = getExcludedProjections(omitMerchantInfo, omitContactInfo, omitConsumerFeatures);
+			List<BasicDBObject> filters = new ArrayList<>();
+			addNameCriteria(filters, name);
+			addGeoSpatialCriteria(filters, longitude, latitude, radius);
+			addGlobalIdsCriteria(filters, gid);
+			addMobileClientAccessCriteria(filters, mobileClientAccess);
+			BasicDBObject andCriteria = new BasicDBObject();
+			if(!filters.isEmpty()) {
+				andCriteria.put("$and", filters);
 			}
+			return dbCollection.find(andCriteria, projections).limit(maximumResults);
 		});
 		List<Location> locations = new ArrayList<>();
 		while (cursor.hasNext()) {
@@ -94,7 +84,7 @@ public class LocationRepository {
 		}
 	}
 
-	private void addGeospatialCriteria(List<BasicDBObject> filters, BigDecimal longitude, BigDecimal latitude, Integer radius) {
+	private void addGeoSpatialCriteria(List<BasicDBObject> filters, BigDecimal longitude, BigDecimal latitude, Integer radius) {
 		// FIXME filter not working, always returns an empty collection
 		if (longitude != null && latitude != null && radius != null) {
 			BasicDBObject geoCriteria = new BasicDBObject("$nearSphere", new double[]{longitude.doubleValue(), latitude.doubleValue()});
@@ -108,9 +98,9 @@ public class LocationRepository {
 		if (gid != null && !gid.isEmpty()) {
 			List<BasicDBObject> gidFilters = new ArrayList<>();
 			for (String globalId : gid) {
-				BasicDBObject glogablIDCriteria = new BasicDBObject();
-				glogablIDCriteria.put("source.globalId", globalId);
-				gidFilters.add(glogablIDCriteria);
+				BasicDBObject globalIDCriteria = new BasicDBObject();
+				globalIDCriteria.put("source.globalId", globalId);
+				gidFilters.add(globalIDCriteria);
 			}
 			BasicDBObject orCriteria = new BasicDBObject();
 			orCriteria.put("$or", gidFilters);

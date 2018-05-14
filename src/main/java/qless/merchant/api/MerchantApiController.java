@@ -1,4 +1,4 @@
-package io.swagger.api;
+package qless.merchant.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;

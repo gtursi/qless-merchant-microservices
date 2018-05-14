@@ -55,6 +55,11 @@ public class MongoConfig extends AbstractMongoConfiguration {
 				MongoClient.getDefaultCodecRegistry());
 	}
 
+	/**
+	 * Initialize the DB just for development (if necessary, replace it with an initialization script).
+	 *
+	 * @throws Exception
+	 */
 	@PostConstruct
 	public void initDB() throws Exception {
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -66,6 +71,5 @@ public class MongoConfig extends AbstractMongoConfiguration {
 		locationCollection.drop();
 		locationCollection.insertMany(Arrays.asList(locations));
 		locationCollection.createIndex(Indexes.geo2dsphere("location.contactInfo.gps"));
-
 	}
 }
