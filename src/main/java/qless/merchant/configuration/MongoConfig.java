@@ -1,4 +1,4 @@
-package io.swagger.configuration;
+package qless.merchant.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.Mongo;
@@ -10,7 +10,7 @@ import com.mongodb.client.model.Indexes;
 import de.bild.codec.EnumCodecProvider;
 import de.bild.codec.PojoCodecProvider;
 import eu.dozd.mongo.codecs.bigdecimal.BigDecimalCodecProvider;
-import io.swagger.model.Location;
+import qless.merchant.model.Location;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;

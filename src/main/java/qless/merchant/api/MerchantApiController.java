@@ -2,9 +2,9 @@ package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
-import io.swagger.model.APIError;
-import io.swagger.model.Location;
-import io.swagger.repository.LocationRepository;
+import qless.merchant.model.APIError;
+import qless.merchant.model.Location;
+import qless.merchant.repository.LocationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

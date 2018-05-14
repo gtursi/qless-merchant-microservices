@@ -11,7 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 @ComponentScan(basePackages = { "qless.merchant", "io.swagger" })
-@EnableMongoRepositories(basePackages = "io.swagger.repository")
+@EnableMongoRepositories(basePackages = "qless.merchant.repository")
 public class Swagger2SpringBoot implements CommandLineRunner {
 
     @Override

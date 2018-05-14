@@ -1,12 +1,12 @@
-package io.swagger.repository;
+package qless.merchant.repository;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
-import io.swagger.model.Location;
-import io.swagger.model.NetworkSource;
+import qless.merchant.model.Location;
+import qless.merchant.model.NetworkSource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.mongodb.core.CollectionCallback;
