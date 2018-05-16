@@ -4,3 +4,4 @@ options.json
 swagger-spring.iml
 .idea
 .swagger-codegen
+.DS_Store

@@ -2,6 +2,7 @@ package qless.merchant.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
+import org.springframework.validation.annotation.Validated;
 import qless.merchant.model.APIError;
 import qless.merchant.model.Location;
 import qless.merchant.repository.LocationRepository;
@@ -23,19 +24,17 @@ import java.util.List;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-05-09T09:53:33.998-03:00")
 
 @Controller
+@Validated
 public class MerchantApiController implements MerchantApi {
 
     private static final Logger log = LoggerFactory.getLogger(MerchantApiController.class);
-
-    private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
 
     private final LocationRepository locationRepository;
 
     @org.springframework.beans.factory.annotation.Autowired
-    public MerchantApiController(ObjectMapper objectMapper, HttpServletRequest request, LocationRepository locationRepository) {
-        this.objectMapper = objectMapper;
+    public MerchantApiController(HttpServletRequest request, LocationRepository locationRepository) {
         this.request = request;
         this.locationRepository = locationRepository;
     }
@@ -74,9 +73,9 @@ public class MerchantApiController implements MerchantApi {
 			@ApiParam(value = "If true, omit the list of supported consumer features from the returned locations.") @Valid @RequestParam(value = "omitConsumerFeatures", required = false) Boolean omitConsumerFeatures,
 			@ApiParam(value = "An optional fields mask" ) @RequestHeader(value="X-Fields", required=false) String xFields) {
 
-		if(maximumResults != null && (maximumResults < 1 || maximumResults > 100)){
-			return new ResponseEntity<APIError>(new APIError("Invalid request parameter(s)."), HttpStatus.BAD_REQUEST);
-		}
+//		if(maximumResults != null && (maximumResults < 1 || maximumResults > 100)){
+//			return new ResponseEntity<APIError>(new APIError("Invalid request parameter(s)."), HttpStatus.BAD_REQUEST);
+//		}
 
 		// TODO Use xFields to project fields
 		List<Location> locations = locationRepository.findBy(searchText, longitude, latitude, searchRadius, gid, maximumResults, mobileClientAccess, omitMerchantInfo, omitContactInfo, omitConsumerFeatures);

@@ -1,36 +1,29 @@
 package qless.merchant.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Indexes;
 import de.bild.codec.EnumCodecProvider;
 import de.bild.codec.PojoCodecProvider;
 import eu.dozd.mongo.codecs.bigdecimal.BigDecimalCodecProvider;
-import qless.merchant.model.Location;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
-
-import javax.annotation.PostConstruct;
-import java.util.Arrays;
+import qless.merchant.ApplicationProperties;
+import qless.merchant.model.Location;
 
 @Configuration
+@Slf4j
 public class MongoConfig extends AbstractMongoConfiguration {
 
-	private final ResourceLoader resourceLoader;
+	private final ApplicationProperties properties;
 
-	public MongoConfig(@Qualifier("webApplicationContext") ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
+	public MongoConfig(ApplicationProperties properties) {
+		this.properties = properties;
 	}
-
 
 	@Override
 	protected String getDatabaseName() {
@@ -39,8 +32,9 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
 	@Override
 	public Mongo mongo() {
+		log.info("MongoDB URI: {}", properties.getMongodbUri());
 		MongoClientOptions mongoClientOptions = new MongoClientOptions.Builder().codecRegistry(getCodecRegistry()).build();
-		return new MongoClient(new ServerAddress("localhost", 27017), mongoClientOptions);
+		return new MongoClient(new ServerAddress(properties.getMongodbUri()), mongoClientOptions);
 	}
 
 	public CodecRegistry getCodecRegistry() {
@@ -55,21 +49,4 @@ public class MongoConfig extends AbstractMongoConfiguration {
 				MongoClient.getDefaultCodecRegistry());
 	}
 
-	/**
-	 * Initialize the DB just for development (if necessary, replace it with an initialization script).
-	 *
-	 * @throws Exception
-	 */
-	@PostConstruct
-	public void initDB() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper();
-		Resource resource = this.resourceLoader.getResource("classpath:us-locator-etl.json");
-		Location[] locations = objectMapper.readValue(resource.getInputStream(), Location[].class);
-
-		MongoClient mongoClient = (MongoClient) mongo();
-		MongoCollection<Location> locationCollection = mongoClient.getDatabase(getDatabaseName()).getCollection("location", Location.class);
-		locationCollection.drop();
-		locationCollection.insertMany(Arrays.asList(locations));
-		locationCollection.createIndex(Indexes.geo2dsphere("location.contactInfo.gps"));
-	}
 }
